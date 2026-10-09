@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Khali Jagah</string>
+    <style name="Theme.KhaliJagah" parent="android:Theme.Material.Light.NoActionBar" />
+</resources>

@@ -1,0 +1,158 @@
+{
+  "trains": [
+    {
+      "id": "MUM-0712",
+      "name": "Kalyan Fast",
+      "type": "fast",
+      "source": "CSMT",
+      "destination": "KY",
+      "departure": "07:12",
+      "arrival": "08:28",
+      "journeyMinutes": 76,
+      "stops": ["CSMT", "BY", "DR", "KR", "GC", "TN", "DI", "KY"]
+    },
+    {
+      "id": "MUM-0735",
+      "name": "Thane Slow",
+      "type": "slow",
+      "source": "CSMT",
+      "destination": "TN",
+      "departure": "07:35",
+      "arrival": "08:52",
+      "journeyMinutes": 77,
+      "stops": ["CSMT", "MAS", "BY", "DR", "KR", "GC", "VK", "BN", "MN", "TN"]
+    },
+    {
+      "id": "MUM-0842",
+      "name": "Kalyan Fast",
+      "type": "fast",
+      "source": "CSMT",
+      "destination": "KY",
+      "departure": "08:42",
+      "arrival": "09:55",
+      "journeyMinutes": 73,
+      "stops": ["CSMT", "BY", "DR", "KR", "GC", "TN", "DI", "KY"]
+    },
+    {
+      "id": "MUM-0851",
+      "name": "Thane Fast",
+      "type": "fast",
+      "source": "CSMT",
+      "destination": "TN",
+      "departure": "08:51",
+      "arrival": "09:42",
+      "journeyMinutes": 51,
+      "stops": ["CSMT", "BY", "DR", "GC", "TN"]
+    },
+    {
+      "id": "MUM-0903",
+      "name": "Dombivli Fast",
+      "type": "fast",
+      "source": "CSMT",
+      "destination": "DI",
+      "departure": "09:03",
+      "arrival": "10:05",
+      "journeyMinutes": 62,
+      "stops": ["CSMT", "DR", "GC", "TN", "DI"]
+    },
+    {
+      "id": "MUM-0925",
+      "name": "Kalyan Slow",
+      "type": "slow",
+      "source": "CSMT",
+      "destination": "KY",
+      "departure": "09:25",
+      "arrival": "11:02",
+      "journeyMinutes": 97,
+      "stops": ["CSMT", "MAS", "BY", "DR", "KR", "GC", "VK", "BN", "MN", "TN", "DI", "KY"]
+    },
+    {
+      "id": "MUM-1030",
+      "name": "Thane Fast",
+      "type": "fast",
+      "source": "CSMT",
+      "destination": "TN",
+      "departure": "10:30",
+      "arrival": "11:18",
+      "journeyMinutes": 48,
+      "stops": ["CSMT", "DR", "GC", "TN"]
+    },
+    {
+      "id": "MUM-1145",
+      "name": "Kalyan Fast",
+      "type": "fast",
+      "source": "CSMT",
+      "destination": "KY",
+      "departure": "11:45",
+      "arrival": "12:55",
+      "journeyMinutes": 70,
+      "stops": ["CSMT", "BY", "DR", "KR", "GC", "TN", "DI", "KY"]
+    },
+    {
+      "id": "MUM-1710",
+      "name": "Kalyan Fast",
+      "type": "fast",
+      "source": "CSMT",
+      "destination": "KY",
+      "departure": "17:10",
+      "arrival": "18:28",
+      "journeyMinutes": 78,
+      "stops": ["CSMT", "BY", "DR", "KR", "GC", "TN", "DI", "KY"]
+    },
+    {
+      "id": "MUM-1745",
+      "name": "Thane Fast",
+      "type": "fast",
+      "source": "CSMT",
+      "destination": "TN",
+      "departure": "17:45",
+      "arrival": "18:38",
+      "journeyMinutes": 53,
+      "stops": ["CSMT", "BY", "DR", "GC", "TN"]
+    },
+    {
+      "id": "MUM-1815",
+      "name": "Dombivli Fast",
+      "type": "fast",
+      "source": "CSMT",
+      "destination": "DI",
+      "departure": "18:15",
+      "arrival": "19:22",
+      "journeyMinutes": 67,
+      "stops": ["CSMT", "DR", "KR", "GC", "TN", "DI"]
+    },
+    {
+      "id": "MUM-1830",
+      "name": "Kalyan Slow",
+      "type": "slow",
+      "source": "CSMT",
+      "destination": "KY",
+      "departure": "18:30",
+      "arrival": "20:15",
+      "journeyMinutes": 105,
+      "stops": ["CSMT", "MAS", "BY", "DR", "KR", "GC", "VK", "BN", "MN", "TN", "DI", "KY"]
+    },
+    {
+      "id": "MUM-1920",
+      "name": "Thane Fast",
+      "type": "fast",
+      "source": "CSMT",
+      "destination": "TN",
+      "departure": "19:20",
+      "arrival": "20:08",
+      "journeyMinutes": 48,
+      "stops": ["CSMT", "DR", "GC", "TN"]
+    },
+    {
+      "id": "MUM-2100",
+      "name": "Kalyan Fast",
+      "type": "fast",
+      "source": "CSMT",
+      "destination": "KY",
+      "departure": "21:00",
+      "arrival": "22:08",
+      "journeyMinutes": 68,
+      "stops": ["CSMT", "BY", "DR", "KR", "GC", "TN", "DI", "KY"]
+    }
+  ]
+}

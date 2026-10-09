@@ -1,0 +1,109 @@
+{
+  "stations": [
+    {
+      "id": "CSMT",
+      "name": "Chhatrapati Shivaji Maharaj Terminus",
+      "shortName": "CSMT",
+      "line": "central",
+      "order": 1
+    },
+    {
+      "id": "MAS",
+      "name": "Masjid Bunder",
+      "shortName": "Masjid",
+      "line": "central",
+      "order": 2
+    },
+    {
+      "id": "BY",
+      "name": "Byculla",
+      "shortName": "Byculla",
+      "line": "central",
+      "order": 3
+    },
+    {
+      "id": "DR",
+      "name": "Dadar",
+      "shortName": "Dadar",
+      "line": "central",
+      "order": 4
+    },
+    {
+      "id": "KR",
+      "name": "Kurla",
+      "shortName": "Kurla",
+      "line": "central",
+      "order": 5
+    },
+    {
+      "id": "GC",
+      "name": "Ghatkopar",
+      "shortName": "Ghatkopar",
+      "line": "central",
+      "order": 6
+    },
+    {
+      "id": "VK",
+      "name": "Vikhroli",
+      "shortName": "Vikhroli",
+      "line": "central",
+      "order": 7
+    },
+    {
+      "id": "BN",
+      "name": "Bhandup",
+      "shortName": "Bhandup",
+      "line": "central",
+      "order": 8
+    },
+    {
+      "id": "MN",
+      "name": "Mulund",
+      "shortName": "Mulund",
+      "line": "central",
+      "order": 9
+    },
+    {
+      "id": "TN",
+      "name": "Thane",
+      "shortName": "Thane",
+      "line": "central",
+      "order": 10
+    },
+    {
+      "id": "DI",
+      "name": "Dombivli",
+      "shortName": "Dombivli",
+      "line": "central",
+      "order": 11
+    },
+    {
+      "id": "KY",
+      "name": "Kalyan",
+      "shortName": "Kalyan",
+      "line": "central",
+      "order": 12
+    },
+    {
+      "id": "AN",
+      "name": "Andheri",
+      "shortName": "Andheri",
+      "line": "western",
+      "order": 5
+    },
+    {
+      "id": "BV",
+      "name": "Borivali",
+      "shortName": "Borivali",
+      "line": "western",
+      "order": 8
+    },
+    {
+      "id": "CCG",
+      "name": "Churchgate",
+      "shortName": "Churchgate",
+      "line": "western",
+      "order": 1
+    }
+  ]
+}
