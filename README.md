@@ -2,33 +2,49 @@
 ### Mumbai Local Train Crowd Intelligence & AI Decision-Support System
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-teal.svg)](LICENSE)
-[![Gemma 4](https://img.shields.io/badge/Model-Gemma--4--31b--it-1B998B.svg)](https://ai.google.dev/)
-[![Gemini API](https://img.shields.io/badge/API-Google%20Gemini%20API-0D1B2A.svg)](https://ai.google.dev/)
-[![Android](https://img.shields.io/badge/Platform-Android%20%7C%20Jetpack%20Compose-3DDC84.svg)](https://developer.android.com/jetpack/compose)
+[![Release](https://img.shields.io/badge/Release-v1.1.0-blue.svg)](https://github.com/atharvakanekar22-dev/Khali-Jagah/releases/tag/v1.1.0)
+[![Model](https://img.shields.io/badge/Model-Gemma--4--31b--it-1B998B.svg)](https://ai.google.dev/)
+[![API](https://img.shields.io/badge/API-Google%20Gemini%20API-0D1B2A.svg)](https://ai.google.dev/)
+[![Backend](https://img.shields.io/badge/Backend-Render%20Hosted%20(HTTPS)-46E3B7.svg)](https://khali-jagah-backend.onrender.com/api/health)
+[![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20Jetpack%20Compose-3DDC84.svg)](https://developer.android.com/jetpack/compose)
 
 > **"Know the crowd before you board."**
 
 ---
 
+## 🚀 Latest Release: v1.1.0
+
+The **v1.1.0** release prepares Khali-Jagah for judging and independent evaluation on physical Android devices using the successfully deployed cloud backend:
+
+* **Production Hosted HTTPS Backend**: The Android application is configured by default to connect to the deployed cloud backend at [`https://khali-jagah-backend.onrender.com`](https://khali-jagah-backend.onrender.com).
+* **Zero Local Host Dependencies**: The production APK eliminates all requirements for `10.0.2.2`, laptop LAN IP addresses (`192.168.x.x`), USB debugging, ADB reverse port forwarding, or a locally running Node.js server.
+* **Resilient Networking Timeouts**: Configured connect (20s) and read (60s) timeouts to seamlessly handle free-tier cloud cold-starts and multi-coach Gemma 4 inference.
+* **Refined Recommendation Handling**: Enhanced schema deserialization for least-crowded coach identification (`coachName` supporting both `coach` and `id` formats) and lower-crowd alternative trains.
+* **Honest Attribution**: The UI explicitly differentiates live **Gemma 4** reasoning (`source: "gemma-4"`) from the offline **Rule-Based Fallback** engine (`source: "rule-based-fallback"`).
+
+📦 **Download the APK**: Download `app-debug.apk` directly from the [GitHub Releases Page](https://github.com/atharvakanekar22-dev/Khali-Jagah/releases/tag/v1.1.0).
+
+---
+
 ## 📌 Problem Statement
 
-Every day, over **7.5 million commuters** rely on the Mumbai Suburban Railway network. During peak morning and evening rush hours, trains frequently operate at more than **300% to 400% of their design capacity**, resulting in dangerous platform surges, severe carriage overcrowding, and immense passenger anxiety.
+Every single day, over **7.5 million commuters** rely on the Mumbai Suburban Railway network across the Central and Western lines. During morning and evening peak rush hours, trains routinely operate at more than **300% to 400% of their rated capacity** ("Super Dense Crush Load"), leading to dangerous platform surges, immense passenger anxiety, and severe carriage overcrowding.
 
-Commuters face critical daily decisions with zero visibility:
-- *Which train is likely to be less crowded?*
-- *Which coach should I position myself for on the platform?*
-- *Is it worth waiting 10–15 minutes for a less congested alternative?*
+Daily commuters face critical travel decisions with zero visibility:
+* *Which train is likely to have manageable passenger volume?*
+* *Which specific coach should I position myself for along a 270-meter platform?*
+* *Is it worth waiting 10–15 minutes for a less crowded alternative service?*
 
-**Khali-Jagah** ("Empty Space") does not attempt to physically expand railway tracks or build train cars. Instead, it solves the **information and decision-support gap** by providing commuters with AI-driven, coach-level crowd intelligence and actionable travel advice before they step onto the platform.
+**Khali-Jagah** ("Empty Space") addresses the **information and decision-support gap**. Rather than asking commuters to navigate raw numbers blindly, it synthesizes schedule data, historical peak patterns, and 12-coach density distributions into clear, actionable advice powered by **Google Gemma 4**.
 
 ---
 
 ## 💡 Solution Overview
 
-Khali-Jagah is a native Android application powered by **Google's Gemma 4** (via the Google Gemini API) and a lightweight Node.js/Express backend. It transforms raw, multidimensional transit metrics (historical occupancy, time-of-day peak patterns, train speed class, and coach-by-coach density) into structured, clear, and actionable commuting insights.
+Khali-Jagah is a native Android application built with modern **Jetpack Compose** backed by a **Node.js/Express** microservice that orchestrates transit data and prompts **Gemma 4 (`gemma-4-31b-it`)** via the **Google Gemini API** (`@google/genai` SDK).
 
 ```
-Station/Route Selection ➔ Train & Schedule Overview ➔ Coach-Wise Crowd Breakdown ➔ Gemma 4 AI Analysis ➔ Actionable Commuter Decision
+Station Selection ➔ Train & Schedule Overview ➔ 12-Coach Crowd Breakdown ➔ Gemma 4 AI Analysis ➔ Actionable Commuter Decision
 ```
 
 ---
@@ -36,61 +52,77 @@ Station/Route Selection ➔ Train & Schedule Overview ➔ Coach-Wise Crowd Break
 ## ✨ Key Features
 
 1. **Station & Route Selection**:
-   - Curated list of Central and Western line stations (CSMT, Byculla, Dadar, Kurla, Ghatkopar, Thane, Kalyan, etc.).
-   - Instant search with real-time substring filtering and line tags (`CENTRAL` / `WESTERN`).
-   - One-tap source/destination station swap.
+   * Covers major Central and Western suburban stations (CSMT, Byculla, Dadar, Kurla, Ghatkopar, Vikhroli, Bhandup, Mulund, Thane, Dombivli, Kalyan, Churchgate, Andheri, Borivali).
+   * Real-time search with instant substring matching and line tags (`CENTRAL` / `WESTERN`).
+   * One-tap source and destination station swap.
 
-2. **Train Schedule & Crowd Preview**:
-   - Complete schedule listings for Fast and Slow local trains.
-   - Departure/arrival timings, journey duration, and overall crowd severity indicators.
-   - Clear distinction between *FAST* and *SLOW* services.
+2. **Train Schedule & Crowd Overview**:
+   * Complete timetable listings for Fast and Slow local services.
+   * Departure and arrival times, journey durations, intermediate stops, and overall crowd severity indicators.
+   * Clear visual distinction between Fast and Slow services.
 
-3. **12-Coach Granular Breakdown**:
-   - Visual progress indicators (`CoachCrowdBar`) for all 12 coaches (C1 to C12).
-   - High-contrast color coding supplemented with accessible text labels (`LOW`, `MODERATE`, `HIGH`, `VERY HIGH`).
-   - Automatic identification of least crowded (*Best Coach*) and most congested coaches.
+3. **12-Coach Granular Visualization**:
+   * Visual density bars (`CoachCrowdBar`) for all 12 coaches (C1 to C12).
+   * Accessible, high-contrast indicators paired with semantic textual levels (`LOW`, `MODERATE`, `HIGH`, `VERY HIGH`).
+   * Automatic highlighting of the least crowded coach (*Best Coach*) and heavily congested coaches.
 
 4. **AI Travel Insight (Powered by Gemma 4)**:
-   - **Contextual Synthesis**: Ingests route, time period, overall crowd score, coach distribution, and alternative trains.
-   - **Structured Reasoning**: Returns 2–4 bulleted rationale explaining *why* the crowding occurs.
-   - **Personalized Recommendation**: Suggests the optimal boarding strategy.
-   - **Alternative Train Comparison**: Evaluates nearby departures and suggests lower-crowd options with calculated crowd score reductions.
+   * **Contextual Synthesis**: Ingests route, departure window, overall congestion score, coach occupancy spread, and alternative options.
+   * **Structured Reasoning**: Generates 2–4 concise bullet points explaining *why* the crowding pattern occurs.
+   * **Actionable Recommendation**: Suggests a specific boarding tactic (e.g., coach position or schedule shift).
+   * **Alternative Train Comparison**: Evaluates nearby departures on the same corridor and calculates expected crowd score reductions.
 
-5. **Graceful Offline & Fallback Engine**:
-   - Deterministic rule-based analytical engine mirroring the Gemma schema if the cloud AI service is temporarily unreachable or when API keys are not configured.
+5. **Deterministic Offline Fallback Engine**:
+   * If the Gemini API is unreachable, rate-limited, or during connectivity disruptions, a deterministic rule-based analysis engine produces structured recommendations without interrupting the user experience.
 
-6. **Safety & Prototype Transparency**:
-   - Explicit disclaimer labels across all screens ensuring users understand the prototype nature of the demonstration data.
+6. **Prototype Transparency & Safety**:
+   * Clear disclaimers across all screens confirming the prototype nature of the demonstration data.
 
 ---
 
-## 🏗️ Technical Architecture
+## 📱 Screenshots
+
+The application workflow across key user journeys:
+
+| 1. Home Dashboard | 2. Station Selector | 3. Train Results |
+| :---: | :---: | :---: |
+| <img src="docs/screenshots/01_home_screen.png" width="240" alt="Home Dashboard" /> | <img src="docs/screenshots/02_origin_sheet.png" width="240" alt="Station Selector Sheet" /> | <img src="docs/screenshots/04_train_results.png" width="240" alt="Train Schedule Results" /> |
+
+| 4. 12-Coach Density | 5. Gemma 4 AI Travel Insight | 6. About & System Architecture |
+| :---: | :---: | :---: |
+| <img src="docs/screenshots/05_crowd_detail.png" width="240" alt="12-Coach Crowd Detail" /> | <img src="docs/screenshots/06_ai_insight.png" width="240" alt="Gemma 4 AI Insight" /> | <img src="docs/screenshots/07_about_screen.png" width="240" alt="About & Architecture Screen" /> |
+
+---
+
+## 🏗️ Technical Architecture & Data Flow
 
 ### End-to-End System Architecture
 
 ```mermaid
 flowchart TD
-    subgraph Client["Android Application (Kotlin + Compose)"]
-        UI["Jetpack Compose UI (Material 3)"]
+    subgraph Client["Android Client (Kotlin + Jetpack Compose)"]
+        UI["Compose UI (Material 3)"]
         VM["MainViewModel (StateFlow & Coroutines)"]
         Repo["KhaliJagahRepository"]
-        RetrofitClient["Retrofit 2.11 + OkHttp 4.12"]
+        Net["RetrofitClient (Retrofit 2.11 + OkHttp 4.12)"]
         UI --> VM
         VM --> Repo
-        Repo --> RetrofitClient
+        Repo --> Net
     end
 
-    subgraph Backend["Node.js / Express API Server"]
-        Router["Express Route Handlers"]
-        StationsRoute["/api/stations"]
-        TrainsRoute["/api/trains"]
-        CrowdRoute["/api/crowd/:trainId"]
-        AnalyzeRoute["/api/analyze-crowd"]
+    subgraph Backend["Hosted Cloud Backend (Node.js on Render)"]
+        Router["Express API Router"]
+        HealthRoute["GET /api/health"]
+        StationsRoute["GET /api/stations"]
+        TrainsRoute["GET /api/trains"]
+        CrowdRoute["GET /api/crowd/:trainId"]
+        AnalyzeRoute["POST /api/analyze-crowd"]
         
-        DataLayer[("Sample Transit Dataset<br/>(JSON Database)")]
+        DataLayer[("Prototype Transit Dataset<br/>(JSON Data Store)")]
         GemmaService["Gemma 4 Service Engine"]
-        FallbackUtil["Rule-Based Fallback Engine"]
+        FallbackUtil["Deterministic Fallback Engine"]
         
+        Router --> HealthRoute
         Router --> StationsRoute
         Router --> TrainsRoute
         Router --> CrowdRoute
@@ -100,290 +132,240 @@ flowchart TD
         TrainsRoute --> DataLayer
         CrowdRoute --> DataLayer
         AnalyzeRoute --> GemmaService
-        AnalyzeRoute -.-> FallbackUtil
+        AnalyzeRoute -.->|API Unavailable / Error| FallbackUtil
         GemmaService --> DataLayer
     end
 
-    subgraph AI["Google AI Cloud"]
-        GeminiAPI["Google Gemini API SDK (@google/genai)"]
-        Gemma4Model["Gemma 4 Model (gemma-4-31b-it)"]
-        GeminiAPI --> Gemma4Model
+    subgraph AICloud["Google AI Cloud"]
+        GeminiSDK["Google GenAI SDK (@google/genai)"]
+        GemmaModel["Gemma 4 Model (gemma-4-31b-it)"]
+        GeminiSDK --> GemmaModel
     end
 
-    RetrofitClient -->|HTTP / JSON| Router
-    GemmaService -->|HTTPS / Structured JSON| GeminiAPI
+    Net -->|HTTPS / JSON| Router
+    GemmaService -->|HTTPS / Structured JSON Schema| GeminiSDK
 ```
 
-### Complete Request & Inference Flow
+### Complete Request & AI Inference Flow
 
 ```
 Android Client (Compose UI)
         │
         ▼
-   Retrofit 2.11 (HTTP POST /api/analyze-crowd)
+   Retrofit 2.11 (HTTPS POST /api/analyze-crowd)
         │
         ▼
-   Node.js / Express Backend
+   Render Hosted Backend (Node.js / Express)
         │
-        ├─► Aggregates Train Schedule + 12-Coach Density + Alternative Trains
+        ├─► Aggregates Train Profile + 12-Coach Metrics + Candidate Alternatives
         │
         ▼
-   Gemma 4 Service (@google/genai SDK)
+   Gemma 4 Service Engine (@google/genai SDK)
         │
-        ├─► Injects Strict Transit System Prompt & Typed JSON Schema
+        ├─► Injects Guardrail System Prompt & Typed JSON Schema
         │
         ▼
    Google Gemini API (Model: gemma-4-31b-it)
         │
         ▼
-   Structured JSON Analysis
+   Typed JSON Response
    { crowdLevel, crowdScore, confidence, summary, reasoning, recommendation, bestCoach, alternative }
         │
         ▼
-   Node.js Backend Response
+   Backend Wraps Response & Emits HTTP 200
         │
         ▼
-   Android Client (AI Travel Insight Card Rendered)
-```
-
----
-
-## 🤖 How Gemma 4 Integration Works
-
-Khali-Jagah utilizes the official **`@google/genai`** SDK to communicate with **Gemma 4 (`gemma-4-31b-it`)** hosted on the Google Gemini API.
-
-### 1. Zero-Hallucination Transit Prompting
-The model is constrained via system instructions to:
-- Act strictly as an urban transit crowd-analysis assistant.
-- Use **only** the provided structured train metrics.
-- Never invent live GPS positions, sensor counts, or real-time platform measurements.
-- Always provide structured reasoning and calculate alternative benefits from the supplied dataset.
-
-### 2. Guaranteed JSON Schema Enforcement
-The backend defines a strict schema using `@google/genai`'s `Type` definitions (`responseMimeType: "application/json"`, `responseJsonSchema: RESPONSE_SCHEMA`), guaranteeing deterministic typed outputs:
-
-```typescript
-{
-  crowdLevel: string;       // "LOW" | "MODERATE" | "HIGH" | "VERY_HIGH"
-  crowdScore: number;       // 0 to 100
-  confidence: number;       // 0.0 to 1.0
-  summary: string;          // Concise situation summary
-  reasoning: string[];      // 2-4 bulleted reasons
-  recommendation: string;   // Actionable advice for commuter
-  bestCoach: {
-    coach: string;          // e.g. "C7"
-    score: number;          // e.g. 65
-    level: string;          // e.g. "HIGH"
-  };
-  alternative?: {
-    trainId: string;        // e.g. "MUM-0925"
-    trainName: string;      // e.g. "Kalyan Slow"
-    departure: string;      // e.g. "09:25"
-    crowdScore: number;     // e.g. 35
-    crowdLevel: string;     // e.g. "MODERATE"
-    difference: number;     // e.g. 47 (% lower crowd)
-    reason: string;
-  };
-}
-```
-
----
-
-## 📊 Verified Live Inference Example
-
-During live testing with `GEMINI_API_KEY` configured and model `gemma-4-31b-it`:
-
-* **Analyzed Train**: `MUM-0842` (Kalyan Fast departing Dadar at 08:42 AM)
-* **Overall Score**: `82/100` (`VERY HIGH` — Peak Period)
-* **Coach Density**: Coaches C2 (91), C3 (88), C11 (90) severely crowded; Coach C7 (65) least crowded.
-
-### Live Response from `gemma-4-31b-it`:
-```json
-{
-  "crowdLevel": "VERY_HIGH",
-  "crowdScore": 82,
-  "confidence": 0.9,
-  "summary": "Expect severe crowding on the 08:42 Kalyan Fast as it operates during peak hours with high historical passenger density.",
-  "reasoning": [
-    "Operating during the morning peak travel window.",
-    "Overall crowd score is very high at 82/100, consistent with a historical average of 80/100.",
-    "Majority of coaches (e.g., C2 at 91/100, C11 at 90/100) exhibit extreme congestion levels."
-  ],
-  "recommendation": "Consider boarding coach C7 for relatively lower crowding (score 65), or switch to the 09:25 Kalyan Slow for significantly better comfort.",
-  "bestCoach": {
-    "coach": "C7",
-    "score": 65,
-    "level": "HIGH"
-  },
-  "alternative": {
-    "trainId": "MUM-0925",
-    "trainName": "Kalyan Slow",
-    "departure": "09:25",
-    "crowdScore": 35,
-    "crowdLevel": "MODERATE",
-    "difference": 47,
-    "reason": "Significantly lower estimated crowd score (35/100 vs 82/100) providing a more comfortable journey."
-  },
-  "source": "gemma-4",
-  "model": "gemma-4-31b-it",
-  "disclaimer": "AI-generated estimate based on prototype dataset. Not official railway data."
-}
+   Android Client Deserializes Response & Renders AI Travel Insight Card
 ```
 
 ---
 
 ## 🛠️ Technology Stack
 
-| Layer | Technology | Purpose |
-|---|---|---|
-| **Android Client** | Kotlin 2.1.20 | Primary programming language |
+| Component | Technology | Purpose |
+| :--- | :--- | :--- |
+| **Android Client** | Kotlin 2.1.20 | Primary language |
 | | Jetpack Compose & Material 3 | Modern declarative UI design system |
-| | Navigation Compose 2.9.0 | Single-activity screen routing & state preservation |
-| | ViewModel & StateFlow | Reactive unidirectional data flow (MVI / MVVM) |
-| | Retrofit 2.11.0 + OkHttp 4.12.0 | Type-safe asynchronous HTTP client |
+| | Navigation Compose 2.9.0 | Single-activity screen navigation |
+| | ViewModel & StateFlow | Reactive unidirectional state architecture |
+| | Retrofit 2.11.0 + OkHttp 4.12.0 | Asynchronous REST networking client |
 | | kotlinx.serialization 1.8.1 | High-performance JSON serialization |
-| **Backend API** | Node.js (v20+) & Express.js | Lightweight REST API server |
-| | `@google/genai` SDK | Official Google GenAI SDK for Gemini API & Gemma |
-| | `dotenv` & `cors` | Environment isolation & cross-origin support |
-| **AI / ML** | Google Gemma 4 (`gemma-4-31b-it`) | Open reasoning model for transit decision intelligence |
-| | Google Gemini API | Cloud inference API infrastructure |
+| **Backend API** | Node.js (v20+) & Express.js | REST routing & orchestration gateway |
+| | `@google/genai` SDK | Official Google GenAI SDK for Gemini API integration |
+| | `cors` & `dotenv` | Cross-origin headers & server configuration |
+| | Hosted on Render | Fully managed cloud hosting with automated HTTPS |
+| **AI / Inference** | Google Gemma 4 (`gemma-4-31b-it`) | Open reasoning model for transit decision intelligence |
+| | Google Gemini API | Cloud inference execution |
 
 ---
 
-## 📏 Crowd Scoring Index
+## 🌐 Live Backend & API Endpoints
 
-Khali-Jagah utilizes a normalized **0–100 Crowd Index**:
+The production backend is hosted at:
+**`https://khali-jagah-backend.onrender.com`**
 
-| Score Range | Crowd Level | Visual Indicator | Passenger Experience |
-|---|---|---|---|
-| **0 – 30** | `LOW` | 🟢 Green | Seats likely available; comfortable boarding |
-| **31 – 55** | `MODERATE` | 🟡 Amber | Standing room comfortable; manageable boarding |
-| **56 – 75** | `HIGH` | 🔴 Red | Packed carriage; expect tight standing space |
-| **76 – 100** | `VERY HIGH` | 🟣 Dark Red | Severe rush; boarding difficult, consider alternatives |
+| Method | Endpoint | Description | Sample Query / Body |
+| :---: | :--- | :--- | :--- |
+| `GET` | `/api/health` | Health status, version, and configured Gemma model | *None* |
+| `GET` | `/api/stations` | Suburban railway stations (Central & Western lines) | Optional `?line=central` |
+| `GET` | `/api/trains` | Available trains for a route | `?source=DR&destination=TN` |
+| `GET` | `/api/crowd/:trainId` | 12-coach occupancy breakdown for a train | URL param: `:trainId` (e.g. `MUM-0842`) |
+| `POST` | `/api/analyze-crowd` | Gemma 4 AI reasoning and travel recommendations | Body: `{"trainId": "MUM-0842"}` |
 
----
-
-## 🔌 API Endpoints Reference
-
-| Method | Endpoint | Description | Query / Body Params |
-|---|---|---|---|
-| `GET` | `/api/health` | Service health, model status & key detection | None |
-| `GET` | `/api/stations` | List of suburban stations | Optional `?line=central` or `?line=western` |
-| `GET` | `/api/trains` | Available trains for a given route | `?source=DR&destination=TN` |
-| `GET` | `/api/crowd/:trainId` | Coach-by-coach density for a specific train | URL parameter `trainId` (e.g. `MUM-0842`) |
-| `POST` | `/api/analyze-crowd` | Gemma 4 AI reasoning and recommendation | Body: `{"trainId": "MUM-0842"}` |
+> [!NOTE]
+> **Free-Tier Cold Starts**: The backend is hosted on Render's free tier, which enters a sleep state after a period of inactivity. The first request after sleep may experience a 15–30 second wake-up latency. The Android client's 20-second connect timeout and 60-second read timeout are designed to accommodate this seamlessly.
 
 ---
 
-## 🚀 Getting Started & Local Setup
+## 🤖 AI Integration & Fallback Behaviour
 
-### Prerequisites
-- **Node.js**: v18+ or v20+
-- **Android Studio**: Ladybug / Meerkat (or Android SDK API 36 with command-line tools)
-- **Java Development Kit**: JDK 17
-- **Google Gemini API Key**: Obtain a free API key from [Google AI Studio](https://aistudio.google.com/)
+Khali-Jagah integrates **Gemma 4 (`gemma-4-31b-it`)** via the `@google/genai` SDK with strict JSON schema enforcement.
+
+### 1. Guardrail System Instructions
+The model is instructed with domain-specific guardrails:
+* Ground reasoning strictly in the provided train schedule and coach density data.
+* Never fabricate real-time platform sensor numbers, live GPS tracking, or official railway authority statements.
+* Output structured JSON adhering strictly to the schema specification.
+
+### 2. Structured Response Schema
+```typescript
+{
+  crowdLevel: string;       // "LOW" | "MODERATE" | "HIGH" | "VERY_HIGH"
+  crowdScore: number;       // 0 to 100
+  confidence: number;       // 0.0 to 1.0
+  summary: string;          // Concise contextual summary
+  reasoning: string[];      // 2 to 4 bulleted reasons
+  recommendation: string;   // Actionable boarding or scheduling recommendation
+  bestCoach?: {
+    coach: string;          // Coach identifier (e.g., "C7")
+    score: number;          // Congestion score (e.g., 65)
+    level: string;          // Density level (e.g., "HIGH")
+  };
+  alternative?: {
+    trainId: string;        // Alternative train ID (e.g., "MUM-0925")
+    trainName: string;      // Alternative name (e.g., "Kalyan Slow")
+    departure: string;      // Departure time (e.g., "09:25")
+    crowdScore: number;     // Crowd score (e.g., 35)
+    crowdLevel: string;     // Crowd level (e.g., "MODERATE")
+    difference: number;     // Score reduction percentage
+    reason: string;
+  };
+}
+```
+
+### 3. Live Gemma 4 vs. Fallback Attribution
+* **Live Inference**: When Gemma 4 processes the request successfully, the response sets `source: "gemma-4"` and `model: "gemma-4-31b-it"`. The Android app displays a distinct **`Gemma 4`** badge.
+* **Deterministic Fallback**: If the API call fails or times out, the backend invokes `generateFallbackAnalysis()`. This rule-based engine computes metrics deterministically, sets `source: "rule-based-fallback"`, and the Android app displays a **`Rule-Based Fallback`** badge.
+* **Honest Attribution**: Rule-based fallback responses and API errors are **never** presented as live AI inference.
 
 ---
 
-### Step 1: Clone Repository
+## 🧪 Testing & Verification
+
+The project has undergone rigorous verification across multiple levels:
+
+1. **Android Unit Tests**:
+   * **9 of 9 unit tests passed** in [ModelsSerializationTest.kt](file:///c:/Users/Atharva/OneDrive/Desktop/Projects/Khali-Jagah/android/app/src/test/java/com/khalijagah/app/data/model/ModelsSerializationTest.kt).
+   * Verified JSON deserialization against real response payloads from all 5 deployed endpoints (`/api/health`, `/api/stations`, `/api/trains`, `/api/crowd/:trainId`, and `/api/analyze-crowd`).
+   * Validated edge cases: missing alternative trains, null/empty coach recommendations, and client URL configuration.
+
+2. **Hosted Endpoint Verification**:
+   * Tested all 5 API endpoints directly against `https://khali-jagah-backend.onrender.com` via HTTPS.
+   * Confirmed live Gemma 4 output generation, schema compliance, and fallback activation.
+
+3. **Debug APK Build**:
+   * Assembled cleanly using Gradle 9.5 and JDK 21 (`BUILD SUCCESSFUL in 15s`).
+   * Output artifact: `android/app/build/outputs/apk/debug/app-debug.apk` (18.22 MB).
+
+4. **Physical-Device Smoke Testing**:
+   * Conducted on a physical **Realme Android smartphone** (running Android 14) with all local computer servers stopped and ADB reverse disabled.
+   * Successfully verified independent station search, route selection, 12-coach density rendering, and live Gemma 4 AI Travel Insight generation over public cellular data and Wi-Fi.
+
+---
+
+## 📦 Android APK Download & Installation
+
+### Option A: Download Pre-Built APK (Recommended for Judges)
+1. Open the [Khali-Jagah GitHub Releases](https://github.com/atharvakanekar22-dev/Khali-Jagah/releases/tag/v1.1.0) page.
+2. Under **Assets**, download **`app-debug.apk`**.
+3. Install the APK on your Android device (ensure "Install from unknown sources" is enabled if prompted).
+
+### Option B: Install via ADB
 ```bash
-git clone https://github.com/your-username/Khali-Jagah.git
-cd Khali-Jagah
+adb install -r android/app/build/outputs/apk/debug/app-debug.apk
 ```
 
 ---
 
-### Step 2: Backend Setup
-1. Navigate to the backend directory and install dependencies:
-   ```bash
-   cd backend
-   npm install
-   ```
+## 💻 Local Development Setup
 
-2. Create your `.env` configuration file from the template:
-   ```bash
-   cp .env.example .env
-   ```
+### Prerequisites
+* **Node.js**: v18+ or v20+
+* **Android Studio**: Ladybug / Meerkat (or Android SDK API 36 with CLI tools)
+* **Java Development Kit**: JDK 17 or JDK 21 (Android Studio JBR recommended)
+* **Google Gemini API Key**: Optional for local backend development; obtain from [Google AI Studio](https://aistudio.google.com/)
 
-3. Open `backend/.env` and paste your Gemini API key:
-   ```env
-   GEMINI_API_KEY=your_actual_gemini_api_key_here
-   GEMMA_MODEL=gemma-4-31b-it
-   PORT=3000
-   ```
+### Step 1: Clone the Repository
+```bash
+git clone https://github.com/atharvakanekar22-dev/Khali-Jagah.git
+cd Khali-Jagah
+```
 
-4. Start the backend server:
-   ```bash
-   npm start
-   ```
-   *The server starts on `http://localhost:3000`. You will see the Khali Jagah startup banner confirming `API key: configured ✓`.*
+### Step 2: Local Backend Setup (Optional)
+```bash
+cd backend
+npm install
+cp .env.example .env
+```
+Add your Gemini API key to `backend/.env`:
+```env
+GEMINI_API_KEY=your_gemini_api_key_here
+GEMMA_MODEL=gemma-4-31b-it
+PORT=3000
+```
+Start the server:
+```bash
+npm start
+```
 
----
-
-### Step 3: Android App Setup & Build
-
-1. Open `android/` in Android Studio **OR** build from the command line using the Gradle wrapper:
-   ```powershell
-   cd android
-   .\gradlew.bat assembleDebug
-   ```
-
-2. **Network Endpoint Note**:
-   - **Android Emulator**: The app is pre-configured to use `http://10.0.2.2:3000` (the Android emulator alias for host machine `localhost`).
-   - **Physical Device**: If testing on a physical Android phone via Wi-Fi, update `BASE_URL` in `android/app/src/main/java/com/khalijagah/app/data/remote/RetrofitClient.kt` with your computer's local IP address (e.g., `http://192.168.1.50:3000`).
-
-3. Install on your connected emulator or device:
-   ```powershell
-   & "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe" install -r "android/app/build/outputs/apk/debug/app-debug.apk"
-   & "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe" shell am start -n com.khalijagah.app/.MainActivity
-   ```
-
----
-
-## 📱 2-Minute Judge Demo Walkthrough
-
-1. **Launch App**: Open *Khali Jagah*. Observe the animated splash screen and transition to the Home dashboard.
-2. **Select Route**:
-   - Tap **FROM** ➔ Select **Dadar** (`DR`).
-   - Tap **TO** ➔ Search & Select **Thane** (`TN`).
-3. **Explore Trains**:
-   - Tap **Check Crowd**.
-   - Browse the 14 trains showing departure times, FAST/SLOW tags, and crowd badges.
-4. **Inspect High-Crowd Train**:
-   - Select **Kalyan Fast (08:42)** with score `82/100 VERY HIGH`.
-   - Inspect the 12-coach visualization. Note that coach `C7 (65)` is flagged as the least congested coach.
-5. **Generate AI Travel Insight**:
-   - Tap **Get AI Travel Insight**.
-   - Watch Gemma 4 analyze the coach occupancy and recommend boarding coach C7 or switching to the **09:25 Kalyan Slow** (`35/100 MODERATE`, a 47% crowd reduction).
-6. **Review About Screen**:
-   - Tap the Info icon in the top app bar to view the Gemma 4 system architecture, structured output pipeline, and dataset disclaimers.
+### Step 3: Android Build
+By default, the Android app connects to the hosted cloud backend (`https://khali-jagah-backend.onrender.com`).
+```powershell
+cd android
+.\gradlew.bat testDebugUnitTest
+.\gradlew.bat assembleDebug
+```
+To build targeting a local backend instead, pass `-PlocalBackend=true`:
+```powershell
+.\gradlew.bat assembleDebug -PlocalBackend=true
+```
 
 ---
 
 ## 🔒 Security & Secrets Management
 
-- **Zero Client-Side Secrets**: The Android application codebase and compiled APK contain **NO** API keys or secrets.
-- **Backend Isolation**: All Gemini API calls originate exclusively from the Node.js backend server.
-- **Git Safety**: `backend/.env`, root `.env`, and all local build property files are strictly listed in `.gitignore` and must never be committed to source control.
+* **Zero Secrets in APK**: The Android application codebase, configuration files, and compiled APK contain **no** API keys or secrets.
+* **Server-Side API Key**: The `GEMINI_API_KEY` is maintained exclusively on the backend as a secure environment variable on Render.
+* **Committed Files**: `.env`, `.env.local`, and build cache artifacts are protected by `.gitignore` and never committed.
 
 ---
 
 ## ⚠️ Prototype Data Disclaimer
 
 > **Important Notice:**
-> **Khali-Jagah** is an experimental prototype and decision-support demonstration created for Hacktoberfest. Train schedules, crowd scores, and coach distributions utilized in this MVP are simulated demonstration data and **do not** represent live sensor telemetry, official Indian Railways data, or Central/Western Railway authority metrics. Commuters must exercise personal judgment; AI recommendations should not be interpreted as absolute safety guarantees.
+> **Khali-Jagah** is an experimental hackathon prototype and commuter decision-support system. All train timetables, crowd scores, and coach-by-coach density metrics utilized in this application are simulated prototype data. They **do not** represent live sensor telemetry, official Indian Railways feeds, or Central/Western Railway authority measurements. Commuters must exercise personal discretion; AI recommendations are analytical estimates and must not be used as official transit safety or operational directives.
 
 ---
 
 ## 🔮 Future Roadmap
 
-- [ ] **Crowdsourced Real-Time Pulse**: In-app passenger check-ins and platform density votes.
-- [ ] **Live Voice Assistant**: Multilingual voice guidance (Hindi, Marathi, English) using Gemini Live API streaming.
-- [ ] **Smart Push Notifications**: Personalized departure notifications based on learned commute patterns.
-- [ ] **Accessibility Platform Mapping**: Elevator, escalator, and luggage compartment density indicators.
+* [ ] **Crowdsourced Commuter Pulse**: Real-time platform check-ins and passenger density votes.
+* [ ] **Multilingual Voice Assistance**: Hands-free route inquiries in Hindi, Marathi, and English using the Gemini Live API.
+* [ ] **Intelligent Departure Alerts**: Personalized notifications when a preferred low-crowd alternative is departing soon.
+* [ ] **Platform Accessibility Indicators**: Escalator, elevator, and ladies' compartment positioning indicators.
 
 ---
 
 ## 📄 License
 
-This project is open-source and available under the [MIT License](LICENSE).
+This project is licensed under the [MIT License](LICENSE).
