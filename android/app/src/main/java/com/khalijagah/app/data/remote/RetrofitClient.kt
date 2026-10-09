@@ -2,6 +2,7 @@ package com.khalijagah.app.data.remote
 
 import android.os.Build
 import android.util.Log
+import com.khalijagah.app.BuildConfig
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
@@ -15,24 +16,17 @@ import java.util.concurrent.TimeUnit
 object RetrofitClient {
     private const val TAG = "KhaliJagahNet"
 
-    private const val DEFAULT_EMULATOR_HOST = "10.0.2.2"
-    private const val DEFAULT_PORT = 3000
-    private const val INITIAL_BASE_URL = "http://$DEFAULT_EMULATOR_HOST:$DEFAULT_PORT"
+    const val PRODUCTION_BASE_URL = "https://khali-jagah-backend.onrender.com/"
+    const val EMULATOR_LOCAL_BASE_URL = "http://10.0.2.2:3000/"
 
-    // Candidate host resolution for emulator vs physical device
-    private val candidateHosts: List<String> by lazy {
-        if (isEmulator()) {
-            listOf("10.0.2.2", "127.0.0.1", "192.168.0.102")
-        } else {
-            // Physical device: try USB reverse (127.0.0.1) first, then LAN Wi-Fi (192.168.0.102), then fallback
-            listOf("127.0.0.1", "192.168.0.102", "10.0.2.2")
-        }
-    }
-
+    /**
+     * Set to true to force local emulator backend (10.0.2.2:3000) when running on an emulator.
+     * By default, it follows BuildConfig.USE_LOCAL_BACKEND (which is false for production/judging builds).
+     */
     @Volatile
-    private var verifiedHost: String? = null
+    var useLocalEmulatorBackend: Boolean = BuildConfig.USE_LOCAL_BACKEND
 
-    private fun isEmulator(): Boolean {
+    fun isEmulator(): Boolean {
         return (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic"))
                 || Build.FINGERPRINT.startsWith("generic")
                 || Build.FINGERPRINT.startsWith("unknown")
@@ -51,42 +45,46 @@ object RetrofitClient {
                 || Build.PRODUCT.contains("simulator")
     }
 
+    /**
+     * Interceptor ensuring the hosted production HTTPS backend is used on physical devices,
+     * while preserving optional local fallback only within an Android emulator environment.
+     */
     private val hostSelectionInterceptor = Interceptor { chain ->
         val originalRequest = chain.request()
         val originalUrl = originalRequest.url
 
-        val currentWorking = verifiedHost
-        if (currentWorking != null) {
-            val redirectedUrl = originalUrl.newBuilder().host(currentWorking).build()
-            val redirectedRequest = originalRequest.newBuilder().url(redirectedUrl).build()
-            try {
-                return@Interceptor chain.proceed(redirectedRequest)
-            } catch (e: IOException) {
-                Log.w(TAG, "Cached host $currentWorking failed (${e.message}), attempting fallback candidates...")
-                verifiedHost = null
-            }
+        // If local backend is explicitly requested AND we are in an emulator, route to 10.0.2.2:3000
+        if (useLocalEmulatorBackend && isEmulator()) {
+            val localUrl = originalUrl.newBuilder()
+                .scheme("http")
+                .host("10.0.2.2")
+                .port(3000)
+                .build()
+            val localRequest = originalRequest.newBuilder().url(localUrl).build()
+            Log.d(TAG, "Routing to local emulator backend: $localUrl")
+            return@Interceptor chain.proceed(localRequest)
         }
 
-        var lastError: IOException? = null
-        for (host in candidateHosts) {
-            val candidateUrl = originalUrl.newBuilder().host(host).build()
-            val candidateRequest = originalRequest.newBuilder().url(candidateUrl).build()
-            try {
-                Log.d(TAG, "Trying backend candidate: http://$host:$DEFAULT_PORT${originalUrl.encodedPath}")
-                val response = chain.proceed(candidateRequest)
-                if (response.isSuccessful || response.code < 500) {
-                    verifiedHost = host
-                    Log.d(TAG, "Successfully connected to backend via $host:$DEFAULT_PORT")
-                    return@Interceptor response
-                }
-                response.close()
-            } catch (e: IOException) {
-                lastError = e
-                Log.d(TAG, "Candidate $host failed (${e.message})")
-            }
+        // On physical devices: Always connect directly to the hosted HTTPS production backend.
+        // No local IPs, no candidate loops, no 10.0.2.2.
+        if (!isEmulator()) {
+            return@Interceptor chain.proceed(originalRequest)
         }
 
-        throw lastError ?: IOException("Could not connect to backend on any candidate host ($candidateHosts)")
+        // On emulator when local backend is not forced: attempt the production URL first.
+        try {
+            return@Interceptor chain.proceed(originalRequest)
+        } catch (e: IOException) {
+            // Only on an emulator, if production is unreachable (e.g. offline dev), fallback to 10.0.2.2
+            Log.w(TAG, "Production backend unreachable on emulator (${e.message}). Falling back to local emulator backend (10.0.2.2:3000)...")
+            val fallbackUrl = originalUrl.newBuilder()
+                .scheme("http")
+                .host("10.0.2.2")
+                .port(3000)
+                .build()
+            val fallbackRequest = originalRequest.newBuilder().url(fallbackUrl).build()
+            return@Interceptor chain.proceed(fallbackRequest)
+        }
     }
 
     private val json = Json {
@@ -96,9 +94,9 @@ object RetrofitClient {
     }
 
     private val okHttpClient = OkHttpClient.Builder()
-        .connectTimeout(4, TimeUnit.SECONDS)
-        .readTimeout(60, TimeUnit.SECONDS) // AI analysis may take time
-        .writeTimeout(15, TimeUnit.SECONDS)
+        .connectTimeout(20, TimeUnit.SECONDS) // Generous connect timeout for mobile networks & Render cold-start
+        .readTimeout(60, TimeUnit.SECONDS)    // AI inference may take time
+        .writeTimeout(30, TimeUnit.SECONDS)
         .addInterceptor(hostSelectionInterceptor)
         .addInterceptor(HttpLoggingInterceptor { message ->
             Log.d("KhaliJagahHttp", message)
@@ -108,7 +106,7 @@ object RetrofitClient {
         .build()
 
     private val retrofit = Retrofit.Builder()
-        .baseUrl(INITIAL_BASE_URL)
+        .baseUrl(if (BuildConfig.BASE_URL.isNotBlank()) BuildConfig.BASE_URL else PRODUCTION_BASE_URL)
         .client(okHttpClient)
         .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
         .build()

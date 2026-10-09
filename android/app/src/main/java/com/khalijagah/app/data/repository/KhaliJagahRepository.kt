@@ -7,6 +7,10 @@ import com.khalijagah.app.data.remote.RetrofitClient
 class KhaliJagahRepository {
     private val api = RetrofitClient.apiService
 
+    suspend fun getHealth(): Result<HealthResponse> = runCatching {
+        api.getHealth()
+    }
+
     suspend fun getStations(): Result<List<Station>> = runCatching {
         val remote = api.getStations().data
         if (remote.isNotEmpty()) remote else DEFAULT_STATIONS

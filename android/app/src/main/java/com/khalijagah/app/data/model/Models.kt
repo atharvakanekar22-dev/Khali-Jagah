@@ -105,9 +105,13 @@ data class AlternativeTrain(
 @Serializable
 data class BestCoachRecommendation(
     val coach: String = "",
+    val id: String? = null,
     val score: Int = 0,
     val level: String = ""
-)
+) {
+    val coachName: String
+        get() = if (coach.isNotBlank()) coach else (id ?: "")
+}
 
 @Serializable
 data class AnalysisResult(
@@ -138,4 +142,14 @@ data class AnalyzeResponse(
 @Serializable
 data class AnalyzeRequest(
     val trainId: String
+)
+
+@Serializable
+data class HealthResponse(
+    val status: String = "",
+    val app: String = "",
+    val version: String = "",
+    val gemmaModel: String = "",
+    val apiKeyConfigured: Boolean = false,
+    val timestamp: String = ""
 )

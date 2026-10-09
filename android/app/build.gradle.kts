@@ -19,6 +19,11 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        val useLocalBackend = project.hasProperty("localBackend") && project.property("localBackend") == "true"
+        val backendUrl = project.findProperty("backendUrl")?.toString() ?: "https://khali-jagah-backend.onrender.com/"
+        buildConfigField("String", "BASE_URL", "\"${backendUrl.trimEnd('/')}/\"")
+        buildConfigField("Boolean", "USE_LOCAL_BACKEND", "${useLocalBackend}")
     }
 
     buildTypes {
@@ -42,6 +47,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     packaging {
@@ -82,6 +88,9 @@ dependencies {
 
     // Serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
+
+    // Tests
+    testImplementation("junit:junit:4.13.2")
 
     // Debug
     debugImplementation("androidx.compose.ui:ui-tooling")

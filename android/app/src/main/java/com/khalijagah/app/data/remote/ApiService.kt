@@ -8,6 +8,9 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ApiService {
+    @GET("/api/health")
+    suspend fun getHealth(): HealthResponse
+
     @GET("/api/stations")
     suspend fun getStations(): StationsResponse
 

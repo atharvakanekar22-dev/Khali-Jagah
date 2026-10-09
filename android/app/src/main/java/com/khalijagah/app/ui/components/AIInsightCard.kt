@@ -48,23 +48,30 @@ fun AIInsightCard(
                     color = TextPrimary
                 )
                 
-                val modelLabel = if (analysis.source.contains("gemma", ignoreCase = true) || 
-                    analysis.model?.contains("gemma", ignoreCase = true) == true) {
-                    "Gemma 4"
-                } else {
-                    "Analysis"
+                val isGemma = analysis.source.contains("gemma", ignoreCase = true) || 
+                    analysis.model?.contains("gemma", ignoreCase = true) == true
+                val isFallback = analysis.source.contains("fallback", ignoreCase = true) ||
+                    analysis.source.contains("rule", ignoreCase = true)
+
+                val modelLabel = when {
+                    isGemma -> "Gemma 4"
+                    isFallback -> "Rule-Based Fallback"
+                    else -> "Analysis"
                 }
+                val badgeBg = if (isFallback) CrowdModerateBg else Slate100
+                val badgeText = if (isFallback) CrowdModerate else Slate700
+                val badgeBorder = if (isFallback) CrowdModerateBorder else BorderSubtle
 
                 Surface(
-                    color = Slate100,
+                    color = badgeBg,
                     shape = RoundedCornerShape(4.dp),
-                    border = BorderStroke(1.dp, BorderSubtle)
+                    border = BorderStroke(1.dp, badgeBorder)
                 ) {
                     Text(
                         text = modelLabel,
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
                         style = MaterialTheme.typography.labelSmall,
-                        color = Slate700,
+                        color = badgeText,
                         fontWeight = FontWeight.SemiBold
                     )
                 }
@@ -169,7 +176,8 @@ fun AIInsightCard(
 
             // Best coach highlight
             analysis.bestCoach?.let { best ->
-                if (best.coach.isNotBlank()) {
+                val coachName = best.coachName
+                if (coachName.isNotBlank()) {
                     Spacer(Modifier.height(12.dp))
                     Surface(
                         modifier = Modifier.fillMaxWidth(),
@@ -182,7 +190,7 @@ fun AIInsightCard(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Recommended Coach: ${best.coach}",
+                                text = "Recommended Coach: $coachName",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = CrowdLow
